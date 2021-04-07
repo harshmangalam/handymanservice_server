@@ -1,0 +1,20 @@
+{
+  "name": "handymanservice_server",
+  "version": "1.0.0",
+  "description": "Service Provider provide services and customer consume this services",
+  "main": "server.js",
+  "repository": " https://github.com/harshmangalam/handymanservice_server.git",
+  "author": "Harsh Mangalam",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "mongoose": "^5.12.3"
+  },
+  "devDependencies": {
+    "morgan": "^1.10.0",
+    "nodemon": "^2.0.7"
+  }
+}
