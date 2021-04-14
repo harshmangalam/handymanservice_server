@@ -14,7 +14,8 @@ const { API_ENDPOINT_NOT_FOUND_ERR, SERVER_ERR } = require("./errors");
 
 // routes
 const authRoutes = require("./routes/auth.route");
-const userRoutes = require("./routes/user.route");
+const categoryRoutes = require("./routes/category.route");
+
 
 // middlewares
 
@@ -47,7 +48,8 @@ app.get("/", (req, res) => {
 // routes middlewares
 
 app.use("/api/auth", authRoutes);
-app.use("/api/user", userRoutes);
+app.use("/api/category", categoryRoutes);
+
 
 // page not found error handling  middleware
 
@@ -77,7 +79,7 @@ async function main() {
     await mongoose.connect(MONGODB_URI, {
       useNewUrlParser: true,
       useCreateIndex: true,
-      useFindAndModify: true,
+      useFindAndModify: false,
       useUnifiedTopology: true,
     });
 

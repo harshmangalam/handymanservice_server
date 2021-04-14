@@ -25,4 +25,12 @@ exports.USER_NOT_FOUND_ERR = "User not found";
 
 exports.INCORRECT_PASSWORD_ERR = "Password is incorrect";
 
+exports.INCORRECT_OTP_ERR = "OTP is incorrect";
+
 exports.ACCESS_DENIED_ERR = "You have not access to perform this action.";
+
+exports.CATEGORY_ALREADY_EXISTS_ERR = "category already exists";
+
+exports.CATEGORY_NOT_FOUND_ERR = "category not found";
+
+exports.SERVICE_NOT_FOUND_ERR = "service not found";

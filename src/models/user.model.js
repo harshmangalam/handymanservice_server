@@ -17,11 +17,11 @@ const userSchema = new Schema(
       type: String,
       required: true,
     },
-    gender: {
-      type: String,
-      enum: ["MALE", "FEMALE", "OTHER"],
-      default: "MALE",
-    },
+    // gender: {
+    //   type: String,
+    //   enum: ["MALE", "FEMALE", "OTHER"],
+    //   default: "MALE",
+    // },
     phone: {
       type: String,
       required: true,
@@ -50,28 +50,19 @@ const userSchema = new Schema(
       city: String,
       pinCode: String,
     },
-    isActive: {
+
+    isAccountVerified: {
       type: Boolean,
       default: false,
     },
-    isEmailVerified: {
-      type: Boolean,
-      default: false,
-    },
-    isPhoneVerified: {
-      type: Boolean,
-      default: false,
-    },
+
+    phoneOtp: String,
+
     blockNotification: {
       type: Boolean,
       default: false,
     },
-    passwordResetEmailOtp: {
-      type: String,
-    },
-    passwordResetPhoneOtp: {
-      type: String,
-    },
+
     isBlocked: {
       type: Boolean,
       default: false,
