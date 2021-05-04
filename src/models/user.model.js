@@ -17,11 +17,7 @@ const userSchema = new Schema(
       type: String,
       required: true,
     },
-    // gender: {
-    //   type: String,
-    //   enum: ["MALE", "FEMALE", "OTHER"],
-    //   default: "MALE",
-    // },
+
     phone: {
       type: String,
       required: true,
@@ -30,7 +26,7 @@ const userSchema = new Schema(
     },
     role: {
       type: String,
-      enum: ["ADMIN", "TASKER", "CUSTOMER"],
+      enum: ["ADMIN", "TASKER", "CUSTOMER","SUPERUSER"],
       default: "CUSTOMER",
     },
 

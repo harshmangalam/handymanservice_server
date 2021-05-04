@@ -1,4 +1,6 @@
 const User = require("../models/user.model");
+const cookie = require("cookie");
+const { SUPER_EMAIL, SUPER_PASS } = require("../config");
 const { validationResult } = require("express-validator");
 const {
   PHONE_NOT_FOUND_ERR,
@@ -59,11 +61,19 @@ exports.loginWithUsername = async (req, res, next) => {
 
     const token = createJwtToken({ userId: user._id });
 
-    res.status(201).json({
+    res.set(
+      "Set-Cookie",
+      cookie.serialize("token", token, {
+        httpOnly: true,
+        sameSite: "strict",
+        maxAge: 3600,
+        path: "/",
+      })
+    );
+    return res.status(201).json({
       type: "success",
       message: "You have loggedin successfully",
       data: {
-        token,
         user,
       },
     });
@@ -150,12 +160,21 @@ exports.loginWithPhoneOtpVerify = async (req, res, next) => {
 
     const token = createJwtToken({ userId });
 
+    res.set(
+      "Set-Cookie",
+      cookie.serialize("token", token, {
+        httpOnly: true,
+        sameSite: "strict",
+        maxAge: 3600,
+        path: "/",
+      })
+    );
+
     res.status(201).json({
       type: "success",
       message: "You have loggedin successfully",
       data: {
         user: user,
-        token,
       },
     });
   } catch (error) {
@@ -187,16 +206,29 @@ exports.createNewUser = async (req, res, next) => {
 
     // hash password
 
-    password = await hashPassword(password, next);
+    let hashed = await hashPassword(password, next);
 
     // create new user
-    const createUser = new User({
-      email,
-      phone,
-      password,
-      name,
-      role,
-    });
+
+    let createUser;
+
+    if (SUPER_EMAIL === email && SUPER_PASS === password) {
+      createUser = new User({
+        email,
+        phone,
+        password: hashed,
+        name,
+        role: "SUPERUSER",
+      });
+    } else {
+      createUser = new User({
+        email,
+        phone,
+        password: hashed,
+        name,
+        role,
+      });
+    }
 
     // save user
 
@@ -254,7 +286,8 @@ exports.fetchCurrentUser = async (req, res, next) => {
 exports.verifyOtp = async (req, res, next) => {
   try {
     const { otp, userId } = req.body;
-    const user = await User.findById(userId);
+
+    const user = await User.findOne(userId.userId);
     if (!user) {
       next({ status: 400, message: USER_NOT_FOUND_ERR });
       return;
@@ -341,6 +374,30 @@ exports.resetPassword = async (req, res, next) => {
     res.status(201).json({
       type: "success",
       message: "Password reset successfully",
+      data: null,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// --------- logout
+
+exports.logoutUser = async (req, res, next) => {
+  try {
+    res.set(
+      "Set-Cookie",
+      cookie.serialize("token", "", {
+        httpOnly: true,
+        sameSite: "strict",
+        expires: new Date(0),
+        path: "/",
+      })
+    );
+
+    return res.status(200).json({
+      type: "success",
+      message: "You have log out successfully",
       data: null,
     });
   } catch (error) {

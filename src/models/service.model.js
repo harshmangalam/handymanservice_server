@@ -13,6 +13,7 @@ const serviceSchema = new Schema(
     },
     image: {
       type: String,
+      trim: true,
       default:
         "https://cdn.iconscout.com/icon/free/png-256/no-image-1771002-1505134.png",
     },

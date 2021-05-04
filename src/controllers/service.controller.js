@@ -8,11 +8,38 @@ const Service = require("../models/service.model");
 // feth all services
 exports.fetchAllServices = async (req, res, next) => {
   try {
-    const services = await Service.find();
+    let { categoryName, page, limit } = req.query;
+    limit = parseInt(limit);
+    page = parseInt(page);
+
+    let services;
+    let count;
+
+    if (categoryName) {
+      services = await Service.find({ category: categoryName })
+        .limit(limit)
+        .skip(limit * page)
+        .populate("creator", "name")
+        .populate("category");
+
+      count = await Service.countDocuments({ category: categoryName });
+    } else {
+      services = await Service.find()
+        .limit(limit)
+        .skip(limit * page)
+        .populate("creator", "name")
+        .populate("category");
+
+      count = await Service.estimatedDocumentCount();
+    }
+
     return res.status(200).json({
       type: "success",
-      message: "fetch all services",
+      message: "fetch  services",
       data: {
+        meta: {
+          count,
+        },
         services,
       },
     });
@@ -21,18 +48,39 @@ exports.fetchAllServices = async (req, res, next) => {
   }
 };
 
-// ------------------------------------
-
 // fetch  service by service id
 
 exports.fetchServiceById = async (req, res, next) => {
   try {
-    const service = await Service.findById(req.params.serviceId);
+    const service = await Service.findById(req.params.serviceId)
+      .populate("creator", "name")
+      .populate("category");
+
     return res.status(200).json({
       type: "success",
       message: "fetch single service by id",
       data: {
         service,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// fetch suggested  service
+
+exports.fetchSuggestedServices = async (req, res, next) => {
+  try {
+    const services = await Service.find()
+      .populate("creator", "name")
+      .populate("category");
+
+    return res.status(200).json({
+      type: "success",
+      message: "fetch suggested services",
+      data: {
+        services,
       },
     });
   } catch (error) {
@@ -46,17 +94,11 @@ exports.fetchServiceById = async (req, res, next) => {
 
 exports.createService = async (req, res, next) => {
   try {
-    let { name, description, image, category } = req.body;
     const currentUser = res.locals.user;
 
-    image = image ? image : DEFAULT_NO_IMG;
-
     const newService = new Service({
-      name,
-      description,
-      image,
+      ...req.body,
       creator: currentUser._id,
-      category,
     });
 
     const saveService = await newService.save();
@@ -79,40 +121,13 @@ exports.createService = async (req, res, next) => {
 
 exports.updateService = async (req, res, next) => {
   try {
-    const { serviceId } = req.params;
-
-    let { name, description, image, category } = req.body;
-
-    image = image ? image : DEFAULT_NO_IMG;
-
-    const currentUser = res.locals.user;
-
-    const service = await Service.findById(serviceId);
-
-    if (!service) {
-      next({ status: 404, message: SERVICE_NOT_FOUND_ERR });
-      return;
-    }
-
-    // only service creator can modify data
-
-    if (service.creator.toString() !== currentUser._id.toString()) {
-      next({ status: 401, message: ACCESS_DENIED_ERR });
-      return;
-    }
-
     // finally update service
 
-    const modifyService = await Service.findByIdAndUpdate(
-      serviceId,
-      {
-        name,
-        description,
-        image,
-        category,
-      },
-      { new: true }
-    );
+    const modifyService = await Service.findByIdAndUpdate(serviceId, req.body, {
+      new: true,
+    })
+      .populate("creator", "name")
+      .populate("category");
 
     // send updated service
     return res.status(200).json({
@@ -132,29 +147,33 @@ exports.updateService = async (req, res, next) => {
 // delete  service by service id
 exports.deleteService = async (req, res, next) => {
   try {
-    const { serviceId } = req.params;
-    const currentUser = res.locals.user;
-    const service = await Service.findById(serviceId);
-
-    if (!service) {
-      next({ status: 404, mesage: SERVICE_NOT_FOUND_ERR });
-      return;
-    }
-
-    // only creator can delete their service
-    if (service.creator.toString() !== currentUser._id.toString()) {
-      next({ status: 401, message: ACCESS_DENIED_ERR });
-      return;
-    }
-
-    // finally delete
-
-    await service.delete();
+    await Service.findByIdAndDelete(req.params.serviceId);
 
     return res.status(200).json({
       type: "success",
       message: " service deleted succesfully",
       data: null,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// fetch services name
+
+exports.fetchServiceName = async (req, res, next) => {
+  try {
+    let { limit } = req.query;
+    limit = parseInt(limit);
+
+    const services = await Service.find().select("name").limit(limit);
+
+    return res.status(200).json({
+      type: "success",
+      message: "fetch services name",
+      data: {
+        services,
+      },
     });
   } catch (error) {
     next(error);

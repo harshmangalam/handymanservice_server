@@ -17,7 +17,7 @@ const categorySchema = new Schema(
     image: {
       type: String,
       default:
-        "https://cdn.iconscout.com/icon/free/png-256/no-image-1771002-1505134.png",
+        "https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg",
     },
 
     creator: {

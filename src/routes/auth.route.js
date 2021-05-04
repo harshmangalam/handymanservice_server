@@ -15,6 +15,7 @@ const {
   resetPassword,
 
   fetchCurrentUser,
+  logoutUser,
 } = require("../controllers/auth.controller");
 
 const loginWithUsernameValidation = [
@@ -52,11 +53,10 @@ router.post(
 );
 
 router.get("/me", checkAuth, fetchCurrentUser);
-
 router.post("/login_with_phone_otp/verify", loginWithPhoneOtpVerify);
-
 router.post("/send_otp", sendOtp);
 router.post("/verify_otp", verifyOtp);
 router.post("/reset_password", resetPassword);
+router.get("/logout", checkAuth, logoutUser);
 
 module.exports = router;

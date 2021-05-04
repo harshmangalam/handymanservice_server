@@ -2,20 +2,24 @@ const express = require("express");
 const mongoose = require("mongoose");
 const http = require("http");
 const cors = require("cors");
-
+const cookieParser = require("cookie-parser");
 require("dotenv").config();
 
 const app = express();
 
 const server = http.createServer(app);
 
-const { PORT, MONGODB_URI, NODE_ENV,ORIGIN } = require("./config");
+const { PORT, MONGODB_URI, NODE_ENV, ORIGIN } = require("./config");
 const { API_ENDPOINT_NOT_FOUND_ERR, SERVER_ERR } = require("./errors");
 
 // routes
 const authRoutes = require("./routes/auth.route");
 const categoryRoutes = require("./routes/category.route");
-
+const serviceRoutes = require("./routes/service.route");
+const bookingRoutes = require("./routes/booking.route");
+const regionRoutes = require("./routes/region.route");
+const profileRoutes = require("./routes/profile.route");
+const adminRoutes = require("./routes/admin.route");
 
 // middlewares
 
@@ -27,6 +31,7 @@ app.use(
     optionsSuccessStatus: 200,
   })
 );
+app.use(cookieParser());
 
 // log in development environment
 
@@ -45,11 +50,13 @@ app.get("/", (req, res) => {
   });
 });
 
-// routes middlewares
-
 app.use("/api/auth", authRoutes);
 app.use("/api/category", categoryRoutes);
-
+app.use("/api/service", serviceRoutes);
+app.use("/api/booking", bookingRoutes);
+app.use("/api/region", regionRoutes);
+app.use("/api/profile", profileRoutes);
+app.use("/api/admin", adminRoutes);
 
 // page not found error handling  middleware
 
