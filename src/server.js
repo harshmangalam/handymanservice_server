@@ -19,6 +19,7 @@ const serviceRoutes = require("./routes/service.route");
 const bookingRoutes = require("./routes/booking.route");
 const regionRoutes = require("./routes/region.route");
 const profileRoutes = require("./routes/profile.route");
+const pageRoutes = require("./routes/page.route");
 const adminRoutes = require("./routes/admin.route");
 
 // middlewares
@@ -57,6 +58,7 @@ app.use("/api/booking", bookingRoutes);
 app.use("/api/region", regionRoutes);
 app.use("/api/profile", profileRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/page", pageRoutes);
 
 // page not found error handling  middleware
 

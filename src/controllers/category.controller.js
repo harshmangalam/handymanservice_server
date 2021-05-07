@@ -1,6 +1,6 @@
 const Category = require("../models/category.model");
 
-// feth all categories
+// fetch all categories
 exports.fetchAllCategories = async (req, res, next) => {
   try {
     const categories = await Category.find();
@@ -43,7 +43,7 @@ exports.fetchCategoryName = async (req, res, next) => {
 // fetch  category by category id
 exports.fetchCategoryById = async (req, res, next) => {
   try {
-    const category = await Category.findById(req.params.categoryId);
+    const category = await Category.findById(req.params.categoryId).populate("creator","name");
     return res.status(200).json({
       type: "success",
       message: "fetch single category by id",

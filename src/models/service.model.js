@@ -27,6 +27,11 @@ const serviceSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "User",
     },
+
+    price: {
+      type: Number,
+      required: true,
+    },
   },
   { timestamps: true }
 );
