@@ -3,6 +3,7 @@ const Booking = require("../models/booking.model");
 const Service = require("../models/service.model");
 const Category = require("../models/category.model");
 const Region = require("../models/region.model");
+const Page = require("../models/page.model");
 
 exports.countDocuments = async (req, res, next) => {
   try {
@@ -14,6 +15,7 @@ exports.countDocuments = async (req, res, next) => {
     const service = await Service.estimatedDocumentCount();
     const category = await Category.estimatedDocumentCount();
     const region = await Region.estimatedDocumentCount();
+    const page = await Page.estimatedDocumentCount();
 
     const count = {
       admin,
@@ -23,6 +25,7 @@ exports.countDocuments = async (req, res, next) => {
       service,
       category,
       region,
+      page
     };
     return res.status(200).json({
       type: "success",

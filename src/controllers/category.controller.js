@@ -3,7 +3,9 @@ const Category = require("../models/category.model");
 // fetch all categories
 exports.fetchAllCategories = async (req, res, next) => {
   try {
-    const categories = await Category.find();
+    let { limit } = req.query;
+
+    const categories = await Category.find().limit(Number(limit));
 
     const count = await Category.estimatedDocumentCount();
     return res.status(200).json({
@@ -43,7 +45,10 @@ exports.fetchCategoryName = async (req, res, next) => {
 // fetch  category by category id
 exports.fetchCategoryById = async (req, res, next) => {
   try {
-    const category = await Category.findById(req.params.categoryId).populate("creator","name");
+    const category = await Category.findById(req.params.categoryId).populate(
+      "creator",
+      "name"
+    );
     return res.status(200).json({
       type: "success",
       message: "fetch single category by id",
@@ -93,9 +98,13 @@ exports.createCategory = async (req, res, next) => {
 
 exports.updateCategory = async (req, res, next) => {
   try {
-    const modifyCat = await Category.findByIdAndUpdate(categoryId, req.body, {
-      new: true,
-    });
+    const modifyCat = await Category.findByIdAndUpdate(
+      req.params.categoryId,
+      req.body,
+      {
+        new: true,
+      }
+    );
 
     // send updated category
     return res.status(200).json({

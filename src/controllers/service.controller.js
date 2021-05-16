@@ -123,7 +123,7 @@ exports.updateService = async (req, res, next) => {
   try {
     // finally update service
 
-    const modifyService = await Service.findByIdAndUpdate(serviceId, req.body, {
+    const modifyService = await Service.findByIdAndUpdate(req.params.serviceId, req.body, {
       new: true,
     })
       .populate("creator", "name")

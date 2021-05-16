@@ -9,6 +9,11 @@ const pageSchema = new Schema(
       unique: true,
     },
 
+    slug: {
+      type: String,
+      trim: true,
+    },
+
     description: {
       type: String,
       trim: true,
@@ -18,6 +23,11 @@ const pageSchema = new Schema(
       type: String,
       trim: true,
       required: true,
+    },
+
+    creator: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
     },
   },
   { timestamps: true }

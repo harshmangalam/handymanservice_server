@@ -32,6 +32,12 @@ const serviceSchema = new Schema(
       type: Number,
       required: true,
     },
+
+    currency: {
+      type: String,
+      enum: ["CAD", "USD"],
+      default: "CAD",
+    },
   },
   { timestamps: true }
 );
