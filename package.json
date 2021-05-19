@@ -21,7 +21,11 @@
     "express-validator": "^6.10.0",
     "fast-two-sms": "^3.0.0",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.12.3"
+    "mongoose": "^5.12.3",
+    "shortid": "^2.2.16",
+    "socket.io": "^4.1.2",
+    "stripe": "^8.148.0",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "morgan": "^1.10.0",

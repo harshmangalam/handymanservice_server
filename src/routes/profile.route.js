@@ -10,12 +10,14 @@ const {
   fetchUserById,
   updateUser,
   deleteUser,
+  fetchUserProfileDetail,
 } = require("../controllers/profile.controller");
 
 router.get("/", fetchAllUsers);
+router.get("/my_profile", checkAuth, fetchUserProfileDetail);
 router.get("/:userId", fetchUserById);
 
-router.get("/:userId", checkAuth, checkAction, updateUser);
+router.put("/:userId", checkAuth, checkAction, updateUser);
 router.post("/:userId", checkAuth, checkAction, deleteUser);
 
 module.exports = router;

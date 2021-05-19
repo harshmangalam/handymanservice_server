@@ -1,5 +1,6 @@
 const User = require("../models/user.model");
-const { ACCESS_DENIED_ERR } = require("../errors");
+const Booking = require("../models/booking.model");
+
 exports.fetchAllUsers = async (req, res, next) => {
   try {
     let { limit, page, role } = req.query;
@@ -46,14 +47,43 @@ exports.fetchUserById = async (req, res, next) => {
   }
 };
 
-exports.updateUser = async (req, res, next) => {
+exports.fetchUserProfileDetail = async (req, res, next) => {
   try {
     const currentUser = res.locals.user;
+    let user = await User.findById(currentUser._id);
+    let completedBookings = await Booking.countDocuments({
+      user: currentUser._id,
+      status: "completed",
+    });
+    let acceptedBookings = await Booking.countDocuments({
+      user: currentUser._id,
+      status: "accepted",
+    });
 
-    if (currentUser._id.toString() !== req.params.userId) {
-      return next({ status: 401, message: ACCESS_DENIED_ERR });
-    }
+    return res.status(200).json({
+      type: "success",
+      message: "Fetch  user by id",
+      data: {
+        user,
+        bookings: [
+          {
+            title: "Accepted Bookings",
+            count: acceptedBookings,
+          },
+          {
+            title: "Completed Bookings",
+            count: completedBookings,
+          },
+        ],
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
+exports.updateUser = async (req, res, next) => {
+  try {
     const user = await User.findByIdAndUpdate(req.params.userId, req.body, {
       new: true,
     });
@@ -71,12 +101,6 @@ exports.updateUser = async (req, res, next) => {
 
 exports.deleteUser = async (req, res, next) => {
   try {
-    const currentUser = res.locals.user;
-
-    if (currentUser._id.toString() !== req.params.userId) {
-      return next({ status: 401, message: ACCESS_DENIED_ERR });
-    }
-
     await User.findByIdAndDelete(req.params.userId);
     return res.status(200).json({
       type: "success",

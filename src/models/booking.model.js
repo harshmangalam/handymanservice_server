@@ -13,7 +13,7 @@ const categorySchema = new Schema(
 
     status: {
       type: String,
-      enum: ["accepted", "rejected"],
+      enum: ["accepted", "rejected", "completed"],
       default: "accepted",
     },
 
@@ -41,10 +41,47 @@ const categorySchema = new Schema(
       type: String,
       trim: true,
     },
+
+    state: {
+      type: String,
+      trim: true,
+    },
+
+    country: {
+      type: String,
+      trim: true,
+    },
+
+    postalCode: {
+      type: String,
+    },
+
     address: {
       type: String,
       trim: true,
     },
+
+    totalPrice: {
+      type: Number,
+    },
+
+    currency: {
+      type: String,
+      enum: ["CAD", "USD"],
+      default: "CAD",
+    },
+    paymentMode: {
+      type: String,
+      enum: ["COD", "ONLINE_PAYMENT"],
+      default: "ONLINE_PAYMENT",
+    },
+
+    isPaymentDone: {
+      type: Boolean,
+      default: false,
+    },
+
+    paymentId: String,
   },
 
   { timestamps: true }

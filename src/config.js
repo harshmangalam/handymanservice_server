@@ -9,3 +9,6 @@ exports.ORIGIN = process.env.ORIGIN;
 
 exports.SUPER_EMAIL = process.env.SUPER_EMAIL;
 exports.SUPER_PASS = process.env.SUPER_PASS;
+
+
+exports.STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY
