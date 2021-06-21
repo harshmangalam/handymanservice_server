@@ -9,7 +9,6 @@ const userSchema = new Schema(
     },
     email: {
       type: String,
-      required: true,
       trim: true,
       unique: true,
     },
@@ -20,13 +19,11 @@ const userSchema = new Schema(
 
     phone: {
       type: String,
-      required: true,
       trim: true,
-      unique: true,
     },
     role: {
       type: String,
-      enum: ["ADMIN", "TASKER", "CUSTOMER","SUPERUSER"],
+      enum: ["ADMIN", "TASKER", "CUSTOMER", "SUPERUSER"],
       default: "CUSTOMER",
     },
 
@@ -34,6 +31,8 @@ const userSchema = new Schema(
       type: String,
       trim: true,
     },
+
+    profilePicPublicId: String,
     addresses: [
       {
         type: String,
@@ -63,6 +62,8 @@ const userSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    socketId: String,
+    token: String,
   },
   { timestamps: true }
 );

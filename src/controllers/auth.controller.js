@@ -47,8 +47,6 @@ exports.loginWithUsername = async (req, res, next) => {
       return;
     }
 
-    // send jwt token
-
     if (!user.isAccountVerified) {
       return res.status(201).json({
         type: "success",
@@ -70,6 +68,9 @@ exports.loginWithUsername = async (req, res, next) => {
         path: "/",
       })
     );
+
+    user.token = token;
+    await user.save();
     return res.status(201).json({
       type: "success",
       message: "You have loggedin successfully",
@@ -170,6 +171,9 @@ exports.loginWithPhoneOtpVerify = async (req, res, next) => {
       })
     );
 
+    user.token = token;
+    await user.save();
+
     res.status(201).json({
       type: "success",
       message: "You have loggedin successfully",
@@ -177,6 +181,80 @@ exports.loginWithPhoneOtpVerify = async (req, res, next) => {
         user: user,
       },
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// -------------------login with facebook ----------------
+
+exports.loginWithFacebook = async (req, res, next) => {
+  try {
+    let { name, email, accessToken, userId, profilePic, role } = req.body;
+    const user = await User.findOne({
+      email,
+    });
+
+    if (user) {
+      const token = createJwtToken({ userId: user._id });
+
+      res.set(
+        "Set-Cookie",
+        cookie.serialize("token", token, {
+          httpOnly: true,
+          sameSite: "strict",
+          maxAge: 3600,
+          path: "/",
+        })
+      );
+
+      user.token = token;
+      await user.save();
+
+      return res.status(201).json({
+        type: "success",
+        message: "You have loggedin successfully",
+        data: {
+          user: user,
+          loggedInBefore: true,
+        },
+      });
+    } else {
+      const password = await hashPassword("test123", next);
+      const newUser = new User({
+        name,
+        email,
+        profilePic,
+        password,
+        isAccountVerified: true,
+        role,
+      });
+
+      let saveUser = await newUser.save();
+      const token = createJwtToken({ userId: saveUser._id });
+
+      newUser.token = token;
+      saveUser = await newUser.save();
+
+      res.set(
+        "Set-Cookie",
+        cookie.serialize("token", token, {
+          httpOnly: true,
+          sameSite: "strict",
+          maxAge: 3600,
+          path: "/",
+        })
+      );
+
+      return res.status(201).json({
+        type: "success",
+        message: "You have loggedin successfully",
+        data: {
+          user: saveUser,
+          loggedInBefore: false,
+        },
+      });
+    }
   } catch (error) {
     next(error);
   }
@@ -293,12 +371,15 @@ exports.verifyOtp = async (req, res, next) => {
       return;
     }
 
+    console.log(user)
     // verification of otp from phone
 
     if (user.phoneOtp != otp) {
       next({ status: 400, message: INCORRECT_OTP_ERR });
       return;
     }
+
+    
 
     user.phoneOtp = "";
     user.isAccountVerified = true;

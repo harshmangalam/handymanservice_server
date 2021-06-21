@@ -51,10 +51,7 @@ exports.fetchUserProfileDetail = async (req, res, next) => {
   try {
     const currentUser = res.locals.user;
     let user = await User.findById(currentUser._id);
-    let completedBookings = await Booking.countDocuments({
-      user: currentUser._id,
-      status: "completed",
-    });
+
     let acceptedBookings = await Booking.countDocuments({
       user: currentUser._id,
       status: "accepted",
@@ -67,12 +64,8 @@ exports.fetchUserProfileDetail = async (req, res, next) => {
         user,
         bookings: [
           {
-            title: "Accepted Bookings",
+            title: "Booked Services",
             count: acceptedBookings,
-          },
-          {
-            title: "Completed Bookings",
-            count: completedBookings,
           },
         ],
       },
@@ -95,7 +88,15 @@ exports.updateUser = async (req, res, next) => {
       },
     });
   } catch (error) {
-    next(error);
+    if (error.code === 11000) {
+      next({
+        message:
+          "Check your information again phone/email may be already exists",
+        status: 400,
+      });
+    } else {
+      next(error);
+    }
   }
 };
 

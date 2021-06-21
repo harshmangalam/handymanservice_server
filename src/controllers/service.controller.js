@@ -8,21 +8,22 @@ const Service = require("../models/service.model");
 // feth all services
 exports.fetchAllServices = async (req, res, next) => {
   try {
-    let { categoryName, page, limit } = req.query;
+    let { category, page, limit } = req.query;
     limit = parseInt(limit);
     page = parseInt(page);
 
     let services;
     let count;
 
-    if (categoryName) {
-      services = await Service.find({ category: categoryName })
+    if (category) {
+      services = await Service.find()
+        .where({ category: category })
         .limit(limit)
         .skip(limit * page)
         .populate("creator", "name")
         .populate("category");
 
-      count = await Service.countDocuments({ category: categoryName });
+      count = await Service.countDocuments({ category: category });
     } else {
       services = await Service.find()
         .limit(limit)
@@ -123,9 +124,13 @@ exports.updateService = async (req, res, next) => {
   try {
     // finally update service
 
-    const modifyService = await Service.findByIdAndUpdate(req.params.serviceId, req.body, {
-      new: true,
-    })
+    const modifyService = await Service.findByIdAndUpdate(
+      req.params.serviceId,
+      req.body,
+      {
+        new: true,
+      }
+    )
       .populate("creator", "name")
       .populate("category");
 

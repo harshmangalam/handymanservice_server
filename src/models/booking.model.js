@@ -17,6 +17,14 @@ const categorySchema = new Schema(
       default: "accepted",
     },
 
+    taskerStatus: [
+      {
+        time: String,
+        date: String,
+        text: String,
+      },
+    ],
+
     date: {
       type: String,
       required: true,
@@ -38,11 +46,6 @@ const categorySchema = new Schema(
     },
 
     city: {
-      type: String,
-      trim: true,
-    },
-
-    state: {
       type: String,
       trim: true,
     },

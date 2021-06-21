@@ -1,13 +1,20 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const http = require("http");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 require("dotenv").config();
 
 const app = express();
 
-const server = http.createServer(app);
+const http = require("http").createServer(app);
+const io = require("socket.io")(http, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+    allowedHeaders: ["Authorization", "token"],
+    credentials: true,
+  },
+});
 
 const { PORT, MONGODB_URI, NODE_ENV, ORIGIN } = require("./config");
 const { API_ENDPOINT_NOT_FOUND_ERR, SERVER_ERR } = require("./errors");
@@ -21,6 +28,8 @@ const regionRoutes = require("./routes/region.route");
 const profileRoutes = require("./routes/profile.route");
 const pageRoutes = require("./routes/page.route");
 const adminRoutes = require("./routes/admin.route");
+const taskerRoutes = require("./routes/tasker.route");
+const chatRoutes = require("./routes/chat.route");
 
 // middlewares
 
@@ -28,11 +37,13 @@ app.use(express.json());
 app.use(
   cors({
     credentials: true,
-    origin: ORIGIN,
+    origin: JSON.parse(process.env.ORIGIN),
     optionsSuccessStatus: 200,
   })
 );
 app.use(cookieParser());
+
+require("./socketio")(io);
 
 // log in development environment
 
@@ -58,7 +69,9 @@ app.use("/api/booking", bookingRoutes);
 app.use("/api/region", regionRoutes);
 app.use("/api/profile", profileRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/tasker", taskerRoutes);
 app.use("/api/page", pageRoutes);
+app.use("/api/chat", chatRoutes);
 
 // page not found error handling  middleware
 
@@ -94,7 +107,7 @@ async function main() {
 
     console.log("database connected");
 
-    server.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
+    http.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
   } catch (error) {
     console.log(error);
     process.exit(1);

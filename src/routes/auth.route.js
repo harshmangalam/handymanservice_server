@@ -9,13 +9,14 @@ const {
   loginWithPhoneOtp,
   loginWithPhoneOtpVerify,
   loginWithUsername,
-
+  loginWithFacebook,
   sendOtp,
   verifyOtp,
   resetPassword,
 
   fetchCurrentUser,
   logoutUser,
+
 } = require("../controllers/auth.controller");
 
 const loginWithUsernameValidation = [
@@ -51,6 +52,8 @@ router.post(
   loginWithPhoneOtpValidation,
   loginWithPhoneOtp
 );
+
+router.post("/login_with_facebook", loginWithFacebook);
 
 router.get("/me", checkAuth, fetchCurrentUser);
 router.post("/login_with_phone_otp/verify", loginWithPhoneOtpVerify);

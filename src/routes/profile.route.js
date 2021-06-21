@@ -18,6 +18,6 @@ router.get("/my_profile", checkAuth, fetchUserProfileDetail);
 router.get("/:userId", fetchUserById);
 
 router.put("/:userId", checkAuth, checkAction, updateUser);
-router.post("/:userId", checkAuth, checkAction, deleteUser);
+router.delete("/:userId", checkAuth, checkAction, deleteUser);
 
 module.exports = router;

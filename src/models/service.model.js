@@ -18,6 +18,8 @@ const serviceSchema = new Schema(
         "https://cdn.iconscout.com/icon/free/png-256/no-image-1771002-1505134.png",
     },
 
+    imagePublicId: String,
+
     category: {
       type: Schema.Types.ObjectId,
       ref: "Category",

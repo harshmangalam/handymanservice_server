@@ -8,6 +8,7 @@ const {
   removeBooking,
   fetchMyBookings,
   bookingPayment,
+  fetchBookingTaskerStatus,
 } = require("../controllers/booking.controller");
 const { body } = require("express-validator");
 
@@ -27,6 +28,7 @@ const bookingValidation = [
 router.get("/", fetchAllBooking);
 router.get("/my_bookings", checkAuth, fetchMyBookings);
 router.get("/:bookingId", fetchBookingById);
+router.get("/:bookingId/tasker_status", checkAuth, fetchBookingTaskerStatus);
 router.post("/:bookingId/payment", checkAuth, bookingPayment);
 router.post("/", checkAuth, createBooking);
 router.put("/:bookingId", checkAuth, updateBooking);

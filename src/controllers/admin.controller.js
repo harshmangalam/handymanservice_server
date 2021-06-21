@@ -25,7 +25,7 @@ exports.countDocuments = async (req, res, next) => {
       service,
       category,
       region,
-      page
+      page,
     };
     return res.status(200).json({
       type: "success",
@@ -38,3 +38,24 @@ exports.countDocuments = async (req, res, next) => {
     next(error);
   }
 };
+
+exports.getAllAdmins = async (req, res, next) => {
+  try {
+    const admins = await User.find();
+
+    return res.status(200).json({
+      type: "success",
+      message: "get all admins",
+      data: {
+        admins,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+// {
+//   $or: [{ role: "ADMIN" }, { role: "SUPERUSER" }],
+// }

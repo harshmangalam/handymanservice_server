@@ -5,14 +5,13 @@ const regionSchema = new Schema(
     city: {
       type: String,
       required: true,
-      unique: true,
       trim: true,
+      unique: true,
     },
 
     country: {
       type: String,
       required: true,
-      unique: true,
       trim: true,
     },
 

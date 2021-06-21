@@ -132,6 +132,10 @@ exports.removeBooking = async (req, res, next) => {
 
 exports.fetchAllBooking = async (req, res, next) => {
   try {
+    let { page, limit } = req.query;
+    limit = parseInt(limit);
+    page = parseInt(page);
+
     const bookings = await Booking.find()
       .populate("user", "-password -phoneOtp")
       .populate({
@@ -140,12 +144,18 @@ exports.fetchAllBooking = async (req, res, next) => {
           { path: "creator", select: "-password -phoneOtp" },
           { path: "category" },
         ],
-      });
+      })
+      .limit(limit)
+      .skip(limit * page);
 
+    count = await Booking.estimatedDocumentCount();
     return res.status(200).json({
       type: "success",
       message: "all bookings",
       data: {
+        meta: {
+          count,
+        },
         bookings,
       },
     });
@@ -211,6 +221,25 @@ exports.fetchBookingById = async (req, res, next) => {
       message: "fetch booking by id",
       data: {
         booking,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// get status updated by tasker in the way
+
+exports.fetchBookingTaskerStatus = async (req, res, next) => {
+  try {
+    const status = await Booking.findById(req.params.bookingId).select(
+      "taskerStatus status"
+    );
+    return res.status(200).json({
+      type: "success",
+      message: "getting bookibg status by tasker",
+      data: {
+        status,
       },
     });
   } catch (error) {
